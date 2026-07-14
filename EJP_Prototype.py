@@ -221,6 +221,11 @@ body {{
     transition: all 0.2s;
 }}
 
+.input-group .shiny-input-container {{
+    width: 100%;
+    max-width: 100%;
+}}
+
 .input-group input:focus, .input-group select:focus {{
     outline: none;
     border-color: {COLORS['primary']};
