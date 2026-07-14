@@ -81,13 +81,81 @@ COLORS = {
 app_css = f"""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+*, *::before, *::after {{
+    box-sizing: border-box;
+}}
+
 * {{
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}}
+
+html, body {{
+    max-width: 100%;
+    overflow-x: hidden;
 }}
 
 body {{
     background: linear-gradient(135deg, #083458 0%, #0a4d7a 100%);
     min-height: 100vh;
+}}
+
+.app-header-inner {{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0 2rem;
+}}
+
+.app-logo {{
+    height: 70px;
+    width: 70px;
+    flex-shrink: 0;
+}}
+
+.app-layout {{
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+}}
+
+.app-sidebar {{
+    width: 260px;
+    flex-shrink: 0;
+}}
+
+.app-sidebar-card {{
+    position: sticky;
+    top: 1rem;
+}}
+
+.cost-grid {{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    align-items: end;
+}}
+
+.ref-cost-span {{
+    grid-column: 1 / span 3;
+    align-self: end;
+}}
+
+.ref-cost-input {{
+    max-width: 280px;
+}}
+
+.btn-calculate {{
+    font-size: 1.1rem;
+    padding: 0.75rem 2.5rem;
+}}
+
+.table-scroll {{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }}
 
 .app-header {{
@@ -371,6 +439,94 @@ body {{
 .comparison-table tr:hover {{
     background: {COLORS['light']};
 }}
+
+/* ── Tablet ────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {{
+    .app-layout {{
+        flex-direction: column;
+    }}
+
+    .app-sidebar {{
+        width: 100%;
+    }}
+
+    .app-sidebar-card {{
+        position: static;
+    }}
+
+    .cost-grid {{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }}
+
+    .ref-cost-span {{
+        grid-column: 1 / -1;
+    }}
+}}
+
+/* ── Mobile ────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {{
+    .app-layout {{
+        padding: 1rem;
+        gap: 1rem;
+    }}
+
+    .app-header-inner {{
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0 1rem;
+        text-align: center;
+    }}
+
+    .app-logo {{
+        height: 50px;
+        width: 50px;
+    }}
+
+    .app-header h1 {{
+        font-size: 1.6rem;
+    }}
+
+    .app-header p {{
+        font-size: 0.9rem;
+    }}
+
+    .card {{
+        padding: 1rem;
+    }}
+
+    .card-header {{
+        font-size: 1.1rem;
+    }}
+
+    .cost-grid {{
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }}
+
+    .ref-cost-input {{
+        max-width: 100%;
+    }}
+
+    .metric-grid {{
+        grid-template-columns: 1fr;
+    }}
+
+    .result-primary {{
+        font-size: 2rem;
+    }}
+
+    .btn-calculate {{
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+    }}
+
+    .comparison-table th,
+    .comparison-table td {{
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }}
+}}
 """
 
 
@@ -378,6 +534,7 @@ body {{
 app_ui = ui.page_fluid(
     ui.tags.style(app_css),
     ui.tags.head(
+        ui.tags.meta(name="viewport", content="width=device-width, initial-scale=1.0"),
         ui.tags.link(rel="icon", type="image/jpg", href="SYMMETRON symbol.jpg")
     ),
 
@@ -385,10 +542,11 @@ app_ui = ui.page_fluid(
     ui.div(
         {"class": "app-header"},
         ui.div(
-            {"style": "display: flex; align-items: center; justify-content: center; gap: 2rem; max-width: 1600px; margin: 0 auto; padding: 0 2rem;"},
+            {"class": "app-header-inner"},
             ui.img(
                 src="SYMMETRON symbol.jpg",
-                style="height: 70px; width: 70px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"
+                class_="app-logo",
+                style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"
             ),
             ui.div(
                 {"style": "text-align: left;"},
@@ -400,13 +558,13 @@ app_ui = ui.page_fluid(
 
     # Main layout with sidebar
     ui.div(
-        {"style": "max-width: 1600px; margin: 0 auto; padding: 1.5rem; display: flex; gap: 1.5rem;"},
-        
+        {"class": "app-layout"},
+
         # Left Sidebar - Scenario Management
         ui.div(
-            {"style": "width: 260px; flex-shrink: 0;"},
+            {"class": "app-sidebar"},
             ui.div(
-                {"class": "card", "style": "position: sticky; top: 1rem;"},
+                {"class": "card app-sidebar-card"},
                 ui.div(
                     {"class": "card-header"},
                     "Scenario Management"
@@ -510,7 +668,7 @@ app_ui = ui.page_fluid(
                 ),
                 # Shared 4-column grid so QALYs columns stay aligned across both drug sections
                 ui.div(
-                    {"style": "display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; padding: 1.25rem 1.5rem 1.25rem 1.5rem; align-items: end;"},
+                    {"class": "cost-grid"},
 
                     # ── New Drug section header ─────────────────────────────────────
                     ui.div(
@@ -560,9 +718,9 @@ app_ui = ui.page_fluid(
 
                     # Reference Drug — cols 1-3: Total Cost (spans to mirror the three new-drug cost fields)
                     ui.div(
-                        {"style": "grid-column: 1 / span 3; align-self: end;"},
+                        {"class": "ref-cost-span"},
                         ui.div(
-                            {"class": "input-group", "style": "margin-bottom: 0; max-width: 280px;"},
+                            {"class": "input-group ref-cost-input", "style": "margin-bottom: 0;"},
                             ui.tags.label(ui.output_ui("comparator_cost_label")),
                             ui.input_numeric("c_total_ref", None, value=160000, min=0, step=1000)
                         )
@@ -582,8 +740,7 @@ app_ui = ui.page_fluid(
                     ui.input_action_button(
                         "calculate_save",
                         "Calculate & Save",
-                        class_="btn btn-primary",
-                        style="font-size: 1.1rem; padding: 0.75rem 2.5rem;"
+                        class_="btn btn-primary btn-calculate"
                     )
                 )
             ),
@@ -1339,6 +1496,7 @@ def server(input, output, session):
             config={
                 'displayModeBar': True,
                 'displaylogo': False,
+                'responsive': True,
                 'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'select2d']
             }
         )
@@ -1438,18 +1596,21 @@ def server(input, output, session):
                 f"📊 Scenario Comparison ({comparison['num_scenarios']} scenario[s])"
             ),
 
-            ui.tags.table(
-                {"class": "comparison-table"},
-                ui.tags.thead(
-                    ui.tags.tr(
-                        ui.tags.th("Scenario"),
-                        ui.tags.th("ICER Threshold Range"),
-                        ui.tags.th("Pack Price"),
-                        ui.tags.th("Justifiable Pack Price"),
-                        ui.tags.th("% Discount Range")
-                    )
-                ),
-                ui.tags.tbody(*rows)
+            ui.div(
+                {"class": "table-scroll"},
+                ui.tags.table(
+                    {"class": "comparison-table"},
+                    ui.tags.thead(
+                        ui.tags.tr(
+                            ui.tags.th("Scenario"),
+                            ui.tags.th("ICER Threshold Range"),
+                            ui.tags.th("Pack Price"),
+                            ui.tags.th("Justifiable Pack Price"),
+                            ui.tags.th("% Discount Range")
+                        )
+                    ),
+                    ui.tags.tbody(*rows)
+                )
             ),
 
         )
