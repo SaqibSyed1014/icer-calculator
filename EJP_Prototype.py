@@ -1834,3 +1834,4 @@ app = App(app_ui, server, static_assets=app_dir)
 # Run the app when this script is executed directly
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8001)
+
