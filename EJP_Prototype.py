@@ -549,7 +549,7 @@ app_ui = ui.page_fluid(
         ui.div(
             {"class": "app-header-inner"},
             ui.img(
-                src="SYMMETRON symbol.jpg",
+                src="symmetron-wordmark.svg",
                 class_="app-logo",
                 style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"
             ),
